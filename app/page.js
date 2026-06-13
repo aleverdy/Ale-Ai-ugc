@@ -18,7 +18,6 @@ export default function Home() {
   const [tone, setTone] = useState("casual");
   const [duration, setDuration] = useState("");
   const [videoType, setVideoType] = useState("");
-  const [aiEngine, setAiEngine] = useState("gemini");
   const [safeMode, setSafeMode] = useState("");
   const [prompt, setPrompt] = useState("");
   const [imagesBase64, setImagesBase64] = useState([]);
@@ -66,7 +65,7 @@ export default function Home() {
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type, tone, duration, videoType, aiEngine, safeMode, prompt, images: imagesBase64 }),
+        body: JSON.stringify({ type, tone, duration, videoType, safeMode, prompt, images: imagesBase64 }),
       });
 
       const data = await response.json();
@@ -162,21 +161,6 @@ export default function Home() {
                   <option value="talking_head">Talking Head / VLOG Style</option>
                   <option value="product_showcase">Product Showcase (Fokus Produk)</option>
                   <option value="tutorial">Tutorial / How-to Step by Step</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="aiEngine"><Bot size={18} /> Model AI (Kecerdasan Buatan)</label>
-              <div className="select-wrapper">
-                <select 
-                  id="aiEngine" 
-                  className="form-control"
-                  value={aiEngine}
-                  onChange={(e) => setAiEngine(e.target.value)}
-                >
-                  <option value="gemini">Google Gemini (Standar)</option>
-                  <option value="openai">OpenAI ChatGPT</option>
                 </select>
               </div>
             </div>

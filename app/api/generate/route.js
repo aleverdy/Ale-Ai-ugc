@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import OpenAI from "openai";
 
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { type, tone, duration, videoType, aiEngine, safeMode, prompt, images } = body;
+    const { type, tone, duration, videoType, safeMode, prompt, images } = body;
 
     if (!prompt) {
       return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
@@ -33,42 +32,6 @@ Tone of Voice: ${tone}${durationContext}${videoTypeContext}${safeModeContext}
 Please output only the generated content without any introductory or concluding remarks.`;
 
     const userPrompt = `Here is the description/topic for the content:\n${prompt}`;
-
-    if (aiEngine === "openai") {
-      let rawOpenAIKey = process.env.OPENAI_API_KEY;
-      if (!rawOpenAIKey) {
-        return NextResponse.json({ error: "OPENAI_API_KEY tidak ditemukan di .env" }, { status: 500 });
-      }
-
-      const openai = new OpenAI({ apiKey: rawOpenAIKey.replace(/['"]/g, '').trim() });
-      
-      const contentArray = [
-        { type: "text", text: userPrompt }
-      ];
-
-      if (images && images.length > 0) {
-        for (const image of images) {
-          contentArray.push({
-            type: "image_url",
-            image_url: { url: image }
-          });
-        }
-      }
-
-      try {
-        const completion = await openai.chat.completions.create({
-          model: "gpt-4o-mini",
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: contentArray }
-          ]
-        });
-        return NextResponse.json({ result: completion.choices[0].message.content });
-      } catch (err) {
-        console.error("OpenAI Error:", err);
-        return NextResponse.json({ error: "Gagal memproses dengan OpenAI: " + err.message }, { status: 500 });
-      }
-    }
 
     let rawApiKey = process.env.GEMINI_API_KEY;
     if (!rawApiKey) {
